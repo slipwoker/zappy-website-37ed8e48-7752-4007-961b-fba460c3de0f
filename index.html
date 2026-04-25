@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>מצפן — מצפן</title>
+    <meta name="description" content="Matzpen (מצפן, meaning &#39;compass&#39; in Hebrew) is an AI-powered personal tutor designed to be accessible and available to students around the clock, 24/7. It posit">
+    <meta name="keywords" content="מצפן, מורה פרטי AI לתלמידים, עזרה בשיעורי בית עם בינה מלאכותית, תגבור לימודי לתלמידים 24 שעות">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: '37ed8e48-7752-4007-961b-fba460c3de0f',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="מצפן — מצפן">
+    <meta property="og:description" content="Matzpen (מצפן, meaning &#39;compass&#39; in Hebrew) is an AI-powered personal tutor designed to be accessible and available to students around the clock, 24/7. It posit">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="מצפן — מצפן">
+    <meta name="twitter:description" content="Matzpen (מצפן, meaning &#39;compass&#39; in Hebrew) is an AI-powered personal tutor designed to be accessible and available to students around the clock, 24/7. It posit">
+    <meta property="og:type" content="website">
+  <meta property="og:locale" content="he_IL">
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: var(--text-dark, #333) !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+      [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 10px !important; padding-right: 28px !important; }
+      .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus (exclude catalog sub-menus that use <a> children instead of <li>) */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))):not(:has(> a)), .sub-menu:not(:has(li)):not(:has(> a)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .navbar .sub-menu.mobile-expanded, .nav-menu .sub-menu.mobile-expanded, #navMenu .sub-menu.mobile-expanded { max-height: none !important; overflow-y: visible !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-light) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-light) !important; white-space: normal !important; }
+        .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+        [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 0 !important; padding-right: 28px !important; }
+        .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+        .nav-menu.active, #navMenu.active { max-width: 100vw !important; overflow-x: hidden !important; box-sizing: border-box !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-light) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="mobile-lang-menu-deployed-css">
+    @media (max-width: 768px) {
+      .lang-switcher,
+      .nav-cta-container .lang-switcher,
+      .nav-container .lang-switcher,
+      .navbar .lang-switcher,
+      .navbar .nav-cta-container .lang-switcher,
+      .nav-icons-left .lang-switcher,
+      .nav-ecommerce-icons .lang-switcher { display: none !important; }
+      .mobile-lang-menu { width: 100%; border-top: 1px solid rgba(128,128,128,0.2); padding: 8px 0 0 0; margin-top: 8px; }
+      .mobile-lang-toggle { display: flex !important; align-items: center; justify-content: space-between; width: 100%; padding: 12px 16px; background: none; border: none; cursor: pointer; font-size: 15px; color: inherit; font-family: inherit; }
+      .mobile-lang-toggle::after { content: ''; display: inline-block; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform 0.3s ease; margin-left: 8px; }
+      .mobile-lang-toggle.expanded::after { transform: rotate(-135deg); }
+      .mobile-lang-options { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+      .mobile-lang-options.expanded { max-height: 300px; }
+      .mobile-lang-option { display: flex !important; align-items: center; gap: 10px; padding: 10px 24px; text-decoration: none; color: inherit; font-size: 14px; font-family: inherit; }
+      .mobile-lang-option:hover { background: rgba(128,128,128,0.1); }
+      .mobile-lang-option.active { font-weight: 600; opacity: 0.7; pointer-events: none; }
+      .mobile-lang-option img { width: 20px; height: 20px; border-radius: 50%; }
+    }
+    @media (min-width: 769px) {
+      .mobile-lang-menu { display: none !important; }
+    }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      #mic-access-tool-general-button, .mic-access-tool-general-button,
+      #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+      ._access-icon, #mic-access-tool-box, .mic-access-tool-box,
+      #mic-init-access-tool #mic-access-tool-box, div[id*="mic-access-tool-box"], ._access-menu {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
+      }
+    </style>
+</head>
+<body>
+
+  <nav class="navbar" dir="rtl">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <button class="phone-header-btn" data-phone="[business_phone]" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+
+  <div class="nav-container">
+    <div class="nav-right-group"><div class="nav-brand">
+      <a href="/" class="logo-link">
+        <img src="/assets/business-logo.webp" alt="מצפן" class="logo">
+      </a>
+    </div><ul class="nav-menu" id="navMenu"><li><a href="#process">תהליך</a></li><li><a href="#services">שירותים</a></li><li><a href="#comparison">השוואה</a></li><li><a href="#reports">דוחות</a></li><li><a href="#testimonials">המלצות</a></li><li><a href="#stats">נתונים</a></li></ul></div>
+
+    
+
+    <div class="nav-cta-container">
+      <a href="#cta" class="nav-cta-btn">צור קשר</a>
+    </div>
+  </div>
+</nav>
+<script>
+
+// Navbar Mobile Menu Toggle and Contrast Fix
+(function() {
+  // Use 'load' event instead of 'DOMContentLoaded' to ensure we run AFTER all other scripts
+  window.addEventListener('load', function() {
+    
+    // FIX MOBILE BUTTON CONTRAST
+    // Detect navbar background color and apply contrasting color to mobile buttons
+    const navbar = document.querySelector('.navbar, nav, header');
+    if (!navbar) {
+      console.log('[Navbar] Navbar element not found');
+      return;
+    }
+    
+    // DECLARE VARIABLES EARLY to avoid Temporal Dead Zone errors
+    // These are used in multiple places below
+    let mobileToggle = document.getElementById('mobileToggle') ||
+                       document.querySelector('.mobile-toggle') ||
+                       document.querySelector('.hamburger') ||
+                       document.querySelector('.hamburger-menu') ||
+                       document.querySelector('.menu-toggle') ||
+                       document.querySelector('.burger-menu') ||
+                       document.querySelector('[aria-label="Menu"]') ||
+                       document.querySelector('[aria-label="תפריט"]');
+    
+    const phoneBtn = document.querySelector('.phone-header-btn');
+    
+    const computedStyle = window.getComputedStyle(navbar);
+    let bgColor = computedStyle.backgroundColor;
+    
+    console.log('[Navbar] Initial navbar background:', bgColor);
+    
+    // Check if background is transparent or rgba with 0 alpha
+    const isTransparent = bgColor === 'transparent' || 
+                         bgColor === 'rgba(0, 0, 0, 0)' ||
+                         (bgColor.startsWith('rgba') && bgColor.includes(', 0)'));
+    
+    if (isTransparent) {
+      // Check for background-image or gradient
+      const bgImage = computedStyle.backgroundImage;
+      if (bgImage && bgImage !== 'none') {
+        console.log('[Navbar] Navbar has background image/gradient, using dark text');
+        bgColor = 'rgb(240, 240, 240)'; // Assume light background
+      } else {
+        // Transparent navbar - check body background
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+        console.log('[Navbar] Navbar transparent, using body background:', bodyBg);
+        bgColor = bodyBg;
+      }
+    }
+    
+    // Calculate luminance to determine if background is light or dark
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+      const r = parseInt(rgb[0]);
+      const g = parseInt(rgb[1]);
+      const b = parseInt(rgb[2]);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // Mobile button colors are set by Claude's AI-generated CSS (same as .nav-menu a)
+      // No dynamic color overrides needed - colors come from the generated navbar CSS
+      console.log('[Navbar] Mobile button colors preserved from Claude CSS (luminance:', luminance.toFixed(2) + ')');
+      
+      // FIX ICON SIZES - Ensure SVGs are properly sized and visible
+      // INJECT CRITICAL CSS TO OVERRIDE ANY CONFLICTING RULES
+      const criticalCSS = document.createElement('style');
+      criticalCSS.id = 'zappy-mobile-nav-fix';
+      const htmlLang = document.documentElement.lang || 'en';
+      const htmlDir = document.documentElement.dir || 'ltr';
+      // Check both dir attribute AND lang for RTL detection
+      // dir="rtl" is the most reliable indicator
+      const isRTL = htmlDir === 'rtl' || htmlLang === 'he' || htmlLang === 'ar';
+      
+      criticalCSS.textContent = `
+        /* Hide mobile buttons on desktop, show only on mobile */
+        @media (min-width: 769px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            display: none !important;
+          }
+        }
+        
+        /* Show and position mobile buttons correctly on mobile */
+        @media (max-width: 768px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            position: absolute !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            z-index: 1001 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            border: none !important;
+            cursor: pointer !important;
+            padding: 6px !important;
+            background: none !important;
+            color: var(--nav-text, var(--text-light)) !important;
+          }
+          
+          /* LTR positioning (default): hamburger LEFT, phone RIGHT */
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .mobile-toggle,
+          html[dir="ltr"] .mobile-toggle {
+            left: 12px !important;
+            right: auto !important;
+          }
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .phone-header-btn,
+          html[dir="ltr"] .phone-header-btn {
+            right: 12px !important;
+            left: auto !important;
+          }
+          
+          /* RTL positioning: hamburger RIGHT, phone LEFT */
+          html[dir="rtl"] .mobile-toggle,
+          html[lang="he"] .mobile-toggle,
+          html[lang="ar"] .mobile-toggle {
+            right: 12px !important;
+            left: auto !important;
+          }
+          html[dir="rtl"] .phone-header-btn,
+          html[lang="he"] .phone-header-btn,
+          html[lang="ar"] .phone-header-btn {
+            left: 12px !important;
+            right: auto !important;
+          }
+          
+          /* CRITICAL: Ensure nav-container has min-height on mobile */
+          /* All children are positioned absolutely/fixed on mobile, so height:auto collapses to 0 */
+          .nav-container {
+            min-height: 70px !important;
+            position: relative !important;
+          }
+          
+          /* Ensure SVG icons are properly sized and inherit color */
+          .mobile-toggle svg,
+          .phone-header-btn svg {
+            width: 24px !important;
+            height: 24px !important;
+            /* Don't force display - let JavaScript control hamburger/close toggle */
+          }
+          
+          /* Reset nav-cta-container on mobile - remove desktop box-shadow/padding */
+          /* that creates a visible ghost box when CTA button is hidden */
+          .nav-cta-container {
+            box-shadow: none !important;
+            padding: 0 !important;
+          }
+          
+          /* Hide nav-cta-container entirely on mobile when there's no lang-switcher */
+          /* (only the CTA button is inside, and it's hidden on mobile) */
+          .nav-cta-container:not(:has(.lang-switcher)) {
+            display: none !important;
+          }
+          
+          /* CRITICAL: Prevent hero image fade gradient from bleeding over headline text */
+          /* The .image-fade-gradient has bottom: -30px (extends below parent) */
+          /* On mobile stacked layout, this overlaps the h1 text below the image */
+          .hero-image-column {
+            overflow: hidden !important;
+          }
+          .image-fade-gradient {
+            bottom: 0 !important;
+          }
+          
+          /* Hide desktop language switcher on mobile - hamburger menu handles it */
+          /* High specificity to override stored CSS */
+          .lang-switcher,
+          .nav-cta-container .lang-switcher,
+          .nav-container .lang-switcher,
+          .navbar .lang-switcher,
+          .navbar .nav-cta-container .lang-switcher {
+            display: none !important;
+          }
+        }
+      `;
+      
+      // Remove existing fix if present and inject new one
+      const existing = document.getElementById('zappy-mobile-nav-fix');
+      if (existing) existing.remove();
+      document.head.appendChild(criticalCSS);
+      
+      console.log('[Navbar] Critical CSS injected for mobile nav positioning');
+      
+      // ONLY apply inline positioning styles on mobile viewport
+      // On desktop, the CSS handles hiding these buttons with display: none
+      // Inline styles were breaking desktop layout by overriding CSS
+      const isMobileViewport = window.innerWidth <= 768;
+      
+      if (mobileToggle) {
+        // Icon sizing applies to all viewports for consistency
+        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+        const closeIcon = mobileToggle.querySelector('.close-icon');
+        
+        if (hamburgerIcon) {
+          hamburgerIcon.style.setProperty('width', '24px', 'important');
+          hamburgerIcon.style.setProperty('height', '24px', 'important');
+          hamburgerIcon.style.setProperty('display', 'block', 'important'); // Show hamburger by default
+        }
+        if (closeIcon) {
+          closeIcon.style.setProperty('width', '24px', 'important');
+          closeIcon.style.setProperty('height', '24px', 'important');
+          closeIcon.style.setProperty('display', 'none', 'important'); // Hide close icon by default
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          mobileToggle.style.setProperty('position', 'absolute', 'important');
+          mobileToggle.style.setProperty('top', '50%', 'important');
+          mobileToggle.style.setProperty('transform', 'translateY(-50%)', 'important');
+          mobileToggle.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          
+          console.log('[Navbar] Mobile toggle positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          mobileToggle.style.removeProperty('position');
+          mobileToggle.style.removeProperty('top');
+          mobileToggle.style.removeProperty('transform');
+          mobileToggle.style.removeProperty('z-index');
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared mobile toggle inline positioning');
+        }
+      }
+      
+      if (phoneBtn) {
+        // Icon sizing applies to all viewports
+        const phoneIcon = phoneBtn.querySelector('svg');
+        if (phoneIcon) {
+          phoneIcon.style.width = '24px';
+          phoneIcon.style.height = '24px';
+          phoneIcon.setAttribute('width', '24');
+          phoneIcon.setAttribute('height', '24');
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          phoneBtn.style.setProperty('position', 'absolute', 'important');
+          phoneBtn.style.setProperty('top', '50%', 'important');
+          phoneBtn.style.setProperty('transform', 'translateY(-50%)', 'important');
+          phoneBtn.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          
+          console.log('[Navbar] Phone button positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          phoneBtn.style.removeProperty('position');
+          phoneBtn.style.removeProperty('top');
+          phoneBtn.style.removeProperty('transform');
+          phoneBtn.style.removeProperty('z-index');
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared phone button inline positioning');
+        }
+      }
+    } else {
+      console.log('[Navbar] Could not parse background color:', bgColor);
+    }
+    
+    // MOBILE MENU TOGGLE
+    // Re-query in case DOM changed (mobileToggle already declared at top of function)
+    mobileToggle = document.getElementById('mobileToggle') ||
+                   document.querySelector('.mobile-toggle') ||
+                   document.querySelector('.hamburger') ||
+                   document.querySelector('.hamburger-menu') ||
+                   document.querySelector('.menu-toggle') ||
+                   document.querySelector('.burger-menu') ||
+                   document.querySelector('[aria-label="Menu"]') ||
+                   document.querySelector('[aria-label="תפריט"]');
+    
+    // EXPANDED SEARCH: Find nav menu by ID or class
+    const navMenu = document.getElementById('navMenu') ||
+                  document.querySelector('.nav-menu') ||
+                  document.querySelector('.nav-links') ||
+                  document.querySelector('nav ul:not(.submenu)');
+    
+    if (!mobileToggle || !navMenu) {
+      console.log('[Navbar] Mobile toggle or menu not found:', { toggle: !!mobileToggle, menu: !!navMenu });
+      return;
+    }
+    
+    // Ensure navMenu has ID for CSS targeting
+    if (!navMenu.id) {
+      navMenu.id = 'navMenu';
+    }
+    
+    console.log('[Navbar] Initializing mobile menu...');
+    
+    // Remove any existing event listeners by cloning the button
+    const newToggle = mobileToggle.cloneNode(true);
+    mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+    
+    // Toggle menu on button click - use newToggle now
+    newToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const hamburgerIcon = this.querySelector('.hamburger-icon');
+      const closeIcon = this.querySelector('.close-icon');
+      const isActive = navMenu.classList.contains('active');
+      
+      if (isActive) {
+        // Close menu
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed');
+      } else {
+        // Open menu
+        navMenu.classList.add('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'none', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'block', 'important');
+        document.body.style.overflow = 'hidden';
+        console.log('[Navbar] Menu opened');
+      }
+    });
+    
+    // Close menu when clicking nav links (but NOT dropdown toggles)
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        // Don't close if it's a dropdown child (unless it's a real navigation link)
+        if (this.getAttribute('href') === '#') return;
+        
+        const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+        const closeIcon = newToggle.querySelector('.close-icon');
+        
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed (link clicked)');
+      });
+    });
+    
+    // DROPDOWN MENU TOGGLE (for mobile and touch devices)
+    var dropdownToggles = navMenu.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(function(toggle) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = this.closest('.nav-dropdown');
+        if (!parent) return;
+        
+        // Close other open dropdowns at the same level
+        var siblings = parent.parentNode.querySelectorAll('.nav-dropdown.open');
+        siblings.forEach(function(sib) {
+          if (sib !== parent) sib.classList.remove('open');
+        });
+        
+        parent.classList.toggle('open');
+        console.log('[Navbar] Dropdown toggled:', parent.classList.contains('open') ? 'open' : 'closed');
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav-dropdown')) {
+        var openDropdowns = document.querySelectorAll('.nav-dropdown.open');
+        openDropdowns.forEach(function(dd) { dd.classList.remove('open'); });
+      }
+    });
+    
+    console.log('[Navbar] Dropdown handlers initialized for ' + dropdownToggles.length + ' dropdowns');
+    
+    // Phone button functionality (phoneBtn already declared at top of function)
+    if (phoneBtn) {
+      phoneBtn.addEventListener('click', function() {
+        // Get phone number from placeholder in page or use default
+        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+        const phoneNumber = phoneLinks.length > 0 
+          ? phoneLinks[0].getAttribute('href').replace('tel:', '')
+          : '[business_phone]';
+        
+        window.location.href = 'tel:' + phoneNumber;
+        console.log('[Navbar] Phone button clicked');
+      });
+    }
+    
+    console.log('[Navbar] Mobile menu initialized successfully');
+    
+    // === WHATSAPP BUTTON VISIBILITY FIX ===
+    // Ensure WhatsApp floating button is hidden on desktop and visible on mobile
+    // IMPORTANT: Only target the floating button by its class, NOT generic wa.me links
+    const handleWhatsAppVisibility = function() {
+      const whatsappBtn = document.querySelector('.whatsapp-float');
+      if (whatsappBtn) {
+        const isDesktop = window.innerWidth >= 769;
+        if (isDesktop) {
+          whatsappBtn.style.setProperty('display', 'none', 'important');
+          whatsappBtn.style.setProperty('visibility', 'hidden', 'important');
+          whatsappBtn.style.setProperty('opacity', '0', 'important');
+          whatsappBtn.style.setProperty('pointer-events', 'none', 'important');
+          console.log('[WhatsApp] Button hidden on desktop');
+        } else {
+          whatsappBtn.style.removeProperty('display');
+          whatsappBtn.style.removeProperty('visibility');
+          whatsappBtn.style.removeProperty('opacity');
+          whatsappBtn.style.removeProperty('pointer-events');
+          console.log('[WhatsApp] Button visible on mobile');
+        }
+      }
+    };
+    
+    // Run on load
+    handleWhatsAppVisibility();
+    
+    // Run on resize with debouncing
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(handleWhatsAppVisibility, 100);
+    });
+  });
+})();
+
+</script>
+  
+  <main>
+    <section id="hero" class="index-hero-section" data-layout-spec="בית-hero" dir="rtl" data-hero-type="fullscreen-scrim">
+  <!-- Background Image -->
+  <div class="index-hero-bg">
+    <img data-hero-bg="true" data-placeholder="index-hero-image-1" data-context="A warm, bright domestic scene of a teenage student studying at home in the evening. The student sits at a wooden desk near a window with soft golden-hour light filtering in. An open laptop displays colorful educational content, a notebook with handwritten notes lies beside it, and a pencil rests on the desk. The room feels calm, cozy, and focused — bookshelves in the background, a warm lamp glowing. The atmosphere is peaceful and productive, conveying trust, learning, and home comfort. Photorealistic, high quality, suitable for an Israeli EdTech brand." width="1200" height="700" src="/assets/site-index-hero-image-1.webp" alt="תלמיד לומד בבית עם לפטופ ומחברת באור ערב חמים">
+  </div>
+
+  <!-- Scrim Overlay -->
+  <div class="index-hero-scrim" aria-hidden="true"></div>
+
+  <!-- Content Card -->
+  <div class="index-hero-container">
+    <div class="index-hero-card">
+
+      <!-- Badge -->
+      <div class="index-hero-badge">
+        <i class="fa-solid fa-compass" aria-hidden="true"></i>
+        <span>מצפן — המורה הפרטי החכם שלך</span>
+      </div>
+
+      <!-- H1 -->
+      <h1 class="index-hero-h1">מורה פרטי מבוסס AI,<br>זמין לך <span class="index-hero-accent">24/7</span></h1>
+
+      <!-- Subtitle -->
+      <h3 class="index-hero-subtitle">חודש שלם של לימוד מונחה AI — במחיר של שיעור פרטי אחד.<br>ודוח שבועי להורים כדי שתמיד תדעו איך הילד מתקדם.</h3>
+
+      <!-- CTA Buttons -->
+      <div class="index-hero-ctas">
+        <a href="#contact" class="index-hero-btn-primary">
+          <i class="fa-solid fa-rocket" aria-hidden="true"></i>
+          התחילו עכשיו
+        </a>
+        <a href="#how-it-works" class="index-hero-btn-secondary">
+          <i class="fa-solid fa-play-circle" aria-hidden="true"></i>
+          איך זה עובד?
+        </a>
+      </div>
+
+      <!-- Trust Chips -->
+      <div class="index-hero-chips">
+        <div class="index-hero-chip">
+          <i class="fa-solid fa-clock" aria-hidden="true"></i>
+          <span>זמין 24/7</span>
+        </div>
+        <div class="index-hero-chip">
+          <i class="fa-solid fa-tag" aria-hidden="true"></i>
+          <span>מחיר שיעור אחד לחודש</span>
+        </div>
+        <div class="index-hero-chip">
+          <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+          <span>דוח שבועי להורים</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom Wave Divider -->
+  <div class="index-hero-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,80 L0,48 Q80,36 160,44 T320,38 Q400,44 480,36 T640,42 Q720,36 800,44 T960,38 Q1040,44 1120,36 T1200,42 L1200,80 Z" fill="#FFFFFF"></path>
+      <path d="M0,80 L0,52 Q80,42 160,48 T320,44 Q400,50 480,42 T640,48 Q720,42 800,50 T960,44 Q1040,50 1120,42 T1200,46 L1200,80 Z" fill="#FFFFFF" stroke="#2CB1A1" stroke-width="2" opacity="0.55"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section id="process" class="index-process-section" data-layout-spec="בית-process" dir="rtl">
+  <div class="index-process-container">
+
+    <!-- Centered Intro Block -->
+    <div class="index-process-intro">
+      <span class="index-process-badge">איך זה עובד</span>
+      <h2 class="index-process-title">שלושה צעדים פשוטים — ומצפן מוביל את הדרך</h2>
+      <p class="index-process-subtitle">אין צורך לחכות לשיעור הפרטי הבא. מצפן זמין לתלמיד בכל שעה, בכל שאלה — ומתחיל לעבוד ברגע שצריך אותו.</p>
+    </div>
+
+    <!-- 12-Column Grid: Steps (right) + Screenshot (left) -->
+    <div class="index-process-grid">
+
+      <!-- Steps Column (START / RIGHT in RTL) -->
+      <div class="index-process-steps">
+
+        <!-- Step 1 -->
+        <article class="index-process-step-card">
+          <div class="index-process-step-header">
+            <div class="index-process-step-number">01</div>
+            <div class="index-process-step-icon-wrap">
+              <svg data-element-type="icon" data-icon-type="svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+          </div>
+          <div class="index-process-step-body">
+            <h3 class="index-process-step-title">שואלים — ומקבלים תשובה מיידית</h3>
+            <p class="index-process-step-desc">תלמיד נתקל בשאלה בשיעורי בית במתמטיקה בשעה עשר בלילה? שולח את השאלה למצפן ומקבל הסבר ברור, שלב אחר שלב, בשפה שמתאימה לגיל ולרמה שלו. אין המתנה, אין לוחות זמנים.</p>
+          </div>
+        </article>
+
+        <!-- Connector -->
+        <div class="index-process-connector" aria-hidden="true">
+          <div class="index-process-connector-line"></div>
+        </div>
+
+        <!-- Step 2 -->
+        <article class="index-process-step-card">
+          <div class="index-process-step-header">
+            <div class="index-process-step-number">02</div>
+            <div class="index-process-step-icon-wrap">
+              <svg data-element-type="icon" data-icon-type="svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="index-process-step-body">
+            <h3 class="index-process-step-title">מצפן מסביר, מנחה ומתאים את עצמו</h3>
+            <p class="index-process-step-desc">בין אם מדובר בהכנה למבחן בדקדוק, בהבנת טקסט בספרות, או בפתרון תרגיל בפיזיקה — המורה ה-AI מזהה את הפערים ומסביר בדיוק מה שצריך. הוא לומד את התלמיד ומתאים את הסגנון אליו.</p>
+          </div>
+        </article>
+
+        <!-- Connector -->
+        <div class="index-process-connector" aria-hidden="true">
+          <div class="index-process-connector-line"></div>
+        </div>
+
+        <!-- Step 3 -->
+        <article class="index-process-step-card">
+          <div class="index-process-step-header">
+            <div class="index-process-step-number">03</div>
+            <div class="index-process-step-icon-wrap">
+              <svg data-element-type="icon" data-icon-type="svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="index-process-step-body">
+            <h3 class="index-process-step-title">ההתקדמות נצברת — וההורה רואה הכל</h3>
+            <p class="index-process-step-desc">כל שיחה, כל תרגיל ועיון בחומר בנייה הופכים לנתוני למידה. בסוף כל שבוע מגיע דוח מסודר להורה: מה נלמד, איפה יש פערים, ומה כדאי לחזק — שקיפות מלאה ושקט נפשי.</p>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Screenshot Column (END / LEFT in RTL) -->
+      <div class="index-process-mockup-col">
+        <div class="index-process-mockup-wrapper">
+          <!-- Browser chrome decoration -->
+          <div class="index-process-browser-chrome">
+            <div class="index-process-browser-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="index-process-browser-bar">מצפן — מורה AI פרטי</div>
+          </div>
+          <!-- Product screenshot image -->
+          <div class="index-process-mockup-image-wrap">
+            <img data-placeholder="index-process-image-1" data-context="A polished EdTech app interface screenshot showing an AI tutor chat conversation in Hebrew between a student and an AI called Matzpen (מצפן). The chat shows a student asking a math homework question and the AI responding with a clear step-by-step solution. Below the chat is a weekly progress dashboard with colorful bar charts showing subjects studied, a progress ring, and a parent-facing weekly report summary. The UI is clean, modern, blue and white color scheme with teal accents, warm cream background, professional and trustworthy design. Israeli educational platform aesthetic." width="600" height="480" src="/assets/site-index-process-image-1.webp" alt="ממשק מצפן — שיחת למידה עם AI ודוח התקדמות שבועי" class="index-process-mockup-img">
+          </div>
+          <!-- Floating badge -->
+          <div class="index-process-float-badge">
+            <div class="index-process-float-badge-icon">
+              <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.5 16z"></path>
+              </svg>
+            </div>
+            <div class="index-process-float-badge-text">
+              <strong>זמין 24/7</strong>
+              <small>ללא הפסקה</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom diagonal divider -->
+  <div class="index-process-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1440 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,70 L0,20 L1440,70 Z" fill="#FFFFFF"></path>
+      <path d="M0,20 L1440,70" fill="#FFFFFF" stroke="var(--accent)" stroke-width="1.5" opacity="0.35"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section id="services" class="index-services-section" data-layout-spec="בית-services" dir="rtl">
+  <div class="index-services-container">
+    <!-- Main grid: intro column + subject tiles -->
+    <div class="index-services-main-grid">
+
+      <!-- Intro column (narrow, start/right side in RTL) -->
+      <aside class="index-services-intro">
+        <span class="index-services-eyebrow">מה מצפן יכול לעשות?</span>
+        <h2 class="index-services-heading">שואלים שאלות בכל מקצוע — מקבלים תשובות עכשיו</h2>
+        <p class="index-services-body">מצפן, המורה הפרטי AI לתלמידים, מכסה את כל תחומי הלימוד הבית-ספריים. הוא מסתגל לקצב של כל תלמיד, מסביר שוב ושוב בסבלנות, ומהפך בלבול לתנועה קדימה — 24 שעות ביממה, 7 ימים בשבוע.</p>
+        <ul class="index-services-perks">
+          <li>
+            <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>הסברים ממוקדים ומותאמים אישית</span>
+          </li>
+          <li>
+            <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>חזרה על חומר עד להבנה מלאה</span>
+          </li>
+          <li>
+            <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>זמין בכל שעה, גם לפני המבחן</span>
+          </li>
+          <li>
+            <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>תגבור לימודי לתלמידים בכל הכיתות</span>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Subject tiles grid (end/left side in RTL) -->
+      <div class="index-services-tiles">
+
+        <!-- Card: Mathematics -->
+        <article class="index-services-card">
+          <div class="index-services-card-icon">
+            <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="6.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
+          </div>
+          <div class="index-services-card-body">
+            <h3>מתמטיקה</h3>
+            <p>אלגברה, גיאומטריה, סטטיסטיקה ועוד — מצפן פותר יחד עם התלמיד שלב אחר שלב.</p>
+          </div>
+        </article>
+
+        <!-- Card: Hebrew & Language -->
+        <article class="index-services-card">
+          <div class="index-services-card-icon">
+            <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          </div>
+          <div class="index-services-card-body">
+            <h3>לשון ועברית</h3>
+            <p>דקדוק, תחביר, הבנת הנקרא ועיצוב לשוני — הכל בשפה ברורה ומדויקת.</p>
+          </div>
+        </article>
+
+        <!-- Card: English -->
+        <article class="index-services-card">
+          <div class="index-services-card-icon">
+            <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          </div>
+          <div class="index-services-card-body">
+            <h3>אנגלית</h3>
+            <p>דיאלוגים, קריאה, כתיבה ודקדוק — מצפן מתאמן עם התלמיד עד שהשפה זורמת.</p>
+          </div>
+        </article>
+
+        <!-- Image tile (lifestyle break in checkerboard) -->
+        <figure class="index-services-image-tile">
+          <img data-placeholder="index-services-image-1" data-context="A confident Israeli middle-school student sitting at a tidy wooden desk, smiling while studying with a tablet or laptop open. Warm afternoon light from a window, school books stacked nearby, a calm and focused atmosphere. The image should feel premium, editorial, and academic — not stock-photo generic. Neutral background, soft shadows, realistic and aspirational." width="600" height="400" src="/assets/site-index-services-image-1.webp" alt="תלמיד לומד בביטחון עם מצפן — המורה הפרטי AI">
+          <figcaption class="index-services-image-caption">למידה בטוחה, בכל שעה</figcaption>
+        </figure>
+
+        <!-- Card: Science -->
+        <article class="index-services-card">
+          <div class="index-services-card-icon">
+            <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"></path></svg>
+          </div>
+          <div class="index-services-card-body">
+            <h3>מדעים</h3>
+            <p>פיזיקה, כימיה, ביולוגיה ומדעי הסביבה — הסברים ויזואליים וברורים לכל תופעה.</p>
+          </div>
+        </article>
+
+        <!-- Card: Writing -->
+        <article class="index-services-card">
+          <div class="index-services-card-icon">
+            <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </div>
+          <div class="index-services-card-body">
+            <h3>כתיבה ועיצוב טקסט</h3>
+            <p>עזרה בכתיבת עבודות, חיבורים, סיכומים ועיצוב רעיונות לכתב מסודר ומשכנע.</p>
+          </div>
+        </article>
+
+        <!-- Card: Exam Prep -->
+        <article class="index-services-card index-services-card--accent">
+          <div class="index-services-card-icon">
+            <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          </div>
+          <div class="index-services-card-body">
+            <h3>הכנה למבחנים</h3>
+            <p>תרגול ממוקד, מבחנים לדוגמה, חיזוק נקודות חולשה — כל זה ממש לפני הבחינה.</p>
+          </div>
+        </article>
+
+      </div>
+      <!-- /tiles -->
+    </div>
+    <!-- /main grid -->
+  </div>
+
+  <!-- Notebook-edge stepped divider (bottom) -->
+  <div class="index-services-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 64" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,64 L0,32 L60,32 L60,20 L180,20 L180,32 L320,32 L320,12 L440,12 L440,32 L580,32 L580,22 L700,22 L700,32 L820,32 L820,8 L940,8 L940,32 L1060,32 L1060,18 L1200,18 L1200,64 Z" fill="#FFFFFF"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section id="comparison" class="index-comparison-section" data-layout-spec="בית-comparison" dir="rtl">
+  <div class="index-comparison-container">
+
+    <!-- Section Header -->
+    <div class="index-comparison-header">
+      <span class="index-comparison-eyebrow">השוואת עלויות</span>
+      <h2 class="index-comparison-title">תמיכה חכמה ורציפה — לא תשלום על כל שאלה</h2>
+      <p class="index-comparison-subtitle">מצפן מציע ללמוד ולהתקדם כל חודש, בעלות של שיעור פרטי אחד בלבד</p>
+    </div>
+
+    <!-- Oversized Numeric Callout -->
+    <div class="index-comparison-callout">
+      <div class="index-comparison-callout-inner">
+        <div class="index-comparison-callout-number">1</div>
+        <div class="index-comparison-callout-text">
+          <strong>שיעור פרטי אחד</strong>
+          <span>= חודש שלם של למידה עם מצפן</span>
+        </div>
+      </div>
+      <p class="index-comparison-callout-desc">במחיר שאתם משלמים על שיעור פרטי אחד, מצפן זמין לילדכם 24/7 — לכל שאלה, בכל שעה, לאורך כל החודש.</p>
+    </div>
+
+    <!-- Comparison Panel -->
+    <div class="index-comparison-panel">
+
+      <!-- Column Headers -->
+      <div class="index-comparison-grid index-comparison-grid-header">
+        <div class="index-comparison-row-label"></div>
+        <div class="index-comparison-col-header index-comparison-col-matzpen">
+          <div class="index-comparison-col-badge">מומלץ</div>
+          <div class="index-comparison-col-logo">
+            <i class="fa-solid fa-compass" aria-hidden="true"></i>
+          </div>
+          <div class="index-comparison-col-name">מצפן</div>
+          <div class="index-comparison-col-sub">מורה פרטי AI לתלמידים</div>
+        </div>
+        <div class="index-comparison-col-header index-comparison-col-tutor">
+          <div class="index-comparison-col-logo index-comparison-col-logo-tutor">
+            <i class="fa-solid fa-user-tie" aria-hidden="true"></i>
+          </div>
+          <div class="index-comparison-col-name">מורה פרטי מסורתי</div>
+          <div class="index-comparison-col-sub">שיעורים פרונטליים</div>
+        </div>
+      </div>
+
+      <!-- Row: Availability -->
+      <div class="index-comparison-grid index-comparison-row">
+        <div class="index-comparison-row-label">
+          <i class="fa-regular fa-clock" aria-hidden="true"></i>
+          <span>זמינות</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-matzpen">
+          <i class="fa-solid fa-circle-check index-comparison-check" aria-hidden="true"></i>
+          <span>24/7 — כל יום, כל שעה</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-tutor">
+          <i class="fa-solid fa-circle-xmark index-comparison-cross" aria-hidden="true"></i>
+          <span>שעות קבועות בלבד</span>
+        </div>
+      </div>
+
+      <!-- Row: Questions -->
+      <div class="index-comparison-grid index-comparison-row index-comparison-row-alt">
+        <div class="index-comparison-row-label">
+          <i class="fa-regular fa-comments" aria-hidden="true"></i>
+          <span>מספר שאלות</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-matzpen">
+          <i class="fa-solid fa-circle-check index-comparison-check" aria-hidden="true"></i>
+          <span>ללא הגבלה</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-tutor">
+          <i class="fa-solid fa-circle-xmark index-comparison-cross" aria-hidden="true"></i>
+          <span>מוגבל לזמן השיעור</span>
+        </div>
+      </div>
+
+      <!-- Row: Continuity -->
+      <div class="index-comparison-grid index-comparison-row">
+        <div class="index-comparison-row-label">
+          <i class="fa-regular fa-bookmark" aria-hidden="true"></i>
+          <span>רצף לימודי</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-matzpen">
+          <i class="fa-solid fa-circle-check index-comparison-check" aria-hidden="true"></i>
+          <span>היסטוריית למידה מלאה</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-tutor">
+          <i class="fa-solid fa-circle-xmark index-comparison-cross" aria-hidden="true"></i>
+          <span>תלוי בזיכרון המורה</span>
+        </div>
+      </div>
+
+      <!-- Row: Practice -->
+      <div class="index-comparison-grid index-comparison-row index-comparison-row-alt">
+        <div class="index-comparison-row-label">
+          <i class="fa-regular fa-repeat" aria-hidden="true"></i>
+          <span>חזרה ותרגול</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-matzpen">
+          <i class="fa-solid fa-circle-check index-comparison-check" aria-hidden="true"></i>
+          <span>תרגול חוזר ללא הגבלה</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-tutor">
+          <i class="fa-solid fa-circle-xmark index-comparison-cross" aria-hidden="true"></i>
+          <span>מחייב תיאום שיעור נוסף</span>
+        </div>
+      </div>
+
+      <!-- Row: Parent Reports -->
+      <div class="index-comparison-grid index-comparison-row">
+        <div class="index-comparison-row-label">
+          <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+          <span>דוח שבועי להורה</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-matzpen">
+          <i class="fa-solid fa-circle-check index-comparison-check" aria-hidden="true"></i>
+          <span>דוח אוטומטי מדי שבוע</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-tutor">
+          <i class="fa-solid fa-circle-xmark index-comparison-cross" aria-hidden="true"></i>
+          <span>אין מעקב מסודר</span>
+        </div>
+      </div>
+
+      <!-- Row: Price -->
+      <div class="index-comparison-grid index-comparison-row index-comparison-row-alt index-comparison-row-price">
+        <div class="index-comparison-row-label">
+          <i class="fa-regular fa-credit-card" aria-hidden="true"></i>
+          <span>עלות חודשית</span>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-matzpen">
+          <div class="index-comparison-price-highlight">
+            <span class="index-comparison-price-value">= שיעור אחד</span>
+            <span class="index-comparison-price-tag">מחיר חודשי קבוע</span>
+          </div>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-tutor">
+          <div class="index-comparison-price-plain">
+            <span class="index-comparison-price-value-plain">4–8 שיעורים</span>
+            <span class="index-comparison-price-tag-plain">עלות גבוהה פי 4–8</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA Row -->
+      <div class="index-comparison-grid index-comparison-cta-row">
+        <div class="index-comparison-row-label"></div>
+        <div class="index-comparison-cell index-comparison-cell-matzpen index-comparison-cell-cta">
+          <a href="#contact" class="btn-primary index-comparison-btn">התחילו עם מצפן</a>
+        </div>
+        <div class="index-comparison-cell index-comparison-cell-tutor index-comparison-cell-cta">
+          <span class="index-comparison-tutor-note">ממשיכים לשלם על כל שיעור</span>
+        </div>
+      </div>
+
+    </div>
+    <!-- End Panel -->
+
+  </div>
+
+  <!-- Bottom Divider -->
+  <div class="index-comparison-divider-wrapper">
+    <div class="index-comparison-gold-band"></div>
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 L0,30 Q300,10 600,30 Q900,50 1200,20 L1200,60 Z" fill="#1E3F78"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section id="reports" class="index-reports-section" data-layout-spec="בית-reports" dir="rtl">
+  <div class="index-reports-container">
+
+    <!-- RIGHT COLUMN: Explanatory Content -->
+    <div class="index-reports-content">
+      <div class="index-reports-badge">
+        <i class="fa-solid fa-envelope-open-text"></i>
+        <span>דוח שבועי להורים</span>
+      </div>
+
+      <h2 class="index-reports-heading">אתם לא צריכים לנחש איך הלמידה מתקדמת</h2>
+
+      <p class="index-reports-intro">מצפן שולח להורים דוח שבועי מפורט — שקוף, ברור ומרגיע. אתם תמיד יודעים בדיוק איפה הילד שלכם עומד, בלי להמתין לסוף הסמסטר.</p>
+
+      <ul class="index-reports-points">
+        <li class="index-reports-point">
+          <div class="index-reports-point-icon">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <div class="index-reports-point-text">
+            <h3>מה תרגלו השבוע</h3>
+            <p>פירוט של הנושאים שהילד עסק בהם, כמות השאלות ואורך הסשן.</p>
+          </div>
+        </li>
+        <li class="index-reports-point">
+          <div class="index-reports-point-icon">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <div class="index-reports-point-text">
+            <h3>היכן ניכרת התקדמות</h3>
+            <p>נושאים שבהם הביצועים השתפרו ורמת הביטחון עלתה.</p>
+          </div>
+        </li>
+        <li class="index-reports-point">
+          <div class="index-reports-point-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div class="index-reports-point-text">
+            <h3>היכן עוד נדרש תמיכה</h3>
+            <p>תחומים שדורשים חזרה נוספת, מוצגים בצורה ברורה ולא מדאיגה.</p>
+          </div>
+        </li>
+        <li class="index-reports-point">
+          <div class="index-reports-point-icon">
+            <i class="fa-solid fa-compass"></i>
+          </div>
+          <div class="index-reports-point-text">
+            <h3>מה מומלץ לשבוע הבא</h3>
+            <p>צעדים ממוקדים ופרקטיים שמצפן ממליץ להמשיך בהם.</p>
+          </div>
+        </li>
+      </ul>
+
+      <p class="index-reports-reassurance">
+        <i class="fa-solid fa-circle-check"></i>
+        התקשורת עם ההורים מתוכננת להיות רגועה, ברורה וניתנת לפעולה — לא מכריעה.
+      </p>
+    </div>
+
+    <!-- LEFT COLUMN: Report Mockup -->
+    <div class="index-reports-mockup-col">
+
+      <!-- Main Report Card -->
+      <div class="index-reports-main-card">
+        <div class="index-reports-card-header">
+          <div class="index-reports-card-logo">
+            <i class="fa-solid fa-compass"></i>
+            <span>מצפן</span>
+          </div>
+          <div class="index-reports-card-meta">
+            <span class="index-reports-week-badge">שבוע 12 · יוני 2025</span>
+          </div>
+        </div>
+
+        <div class="index-reports-card-title-row">
+          <h2 class="index-reports-card-title">דוח התקדמות שבועי</h2>
+          <p class="index-reports-card-subtitle">עבור: <strong>דניאל כהן</strong> · כיתה י׳</p>
+        </div>
+
+        <!-- Topics Practiced -->
+        <div class="index-reports-card-section">
+          <h3 class="index-reports-section-label">
+            <i class="fa-solid fa-book-open"></i>
+            נושאים שתורגלו
+          </h3>
+          <div class="index-reports-topics">
+            <span class="index-reports-topic-tag">אלגברה לינארית</span>
+            <span class="index-reports-topic-tag">הסתברות</span>
+            <span class="index-reports-topic-tag">גיאומטריה אנליטית</span>
+            <span class="index-reports-topic-tag">פיזיקה — מכניקה</span>
+          </div>
+        </div>
+
+        <!-- Progress Bars -->
+        <div class="index-reports-card-section">
+          <h3 class="index-reports-section-label">
+            <i class="fa-solid fa-chart-line"></i>
+            התקדמות לפי נושא
+          </h3>
+          <div class="index-reports-bars">
+            <div class="index-reports-bar-row">
+              <span class="index-reports-bar-label">אלגברה לינארית</span>
+              <div class="index-reports-bar-track">
+                <div class="index-reports-bar-fill" style="width: 82%;"></div>
+              </div>
+              <span class="index-reports-bar-pct">82%</span>
+            </div>
+            <div class="index-reports-bar-row">
+              <span class="index-reports-bar-label">הסתברות</span>
+              <div class="index-reports-bar-track">
+                <div class="index-reports-bar-fill index-reports-bar-accent" style="width: 65%;"></div>
+              </div>
+              <span class="index-reports-bar-pct">65%</span>
+            </div>
+            <div class="index-reports-bar-row">
+              <span class="index-reports-bar-label">גיאומטריה</span>
+              <div class="index-reports-bar-track">
+                <div class="index-reports-bar-fill" style="width: 91%;"></div>
+              </div>
+              <span class="index-reports-bar-pct">91%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strengths & Attention -->
+        <div class="index-reports-card-two-col">
+          <div class="index-reports-strength-box">
+            <h3 class="index-reports-section-label index-reports-label-teal">
+              <i class="fa-solid fa-star"></i>
+              חוזקות
+            </h3>
+            <ul class="index-reports-mini-list">
+              <li>פתרון משוואות</li>
+              <li>הגדרות גיאומטריות</li>
+              <li>עקביות יומיומית</li>
+            </ul>
+          </div>
+          <div class="index-reports-attention-box">
+            <h3 class="index-reports-section-label index-reports-label-gold">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              לשים לב
+            </h3>
+            <ul class="index-reports-mini-list">
+              <li>חישובי הסתברות</li>
+              <li>בעיות מילוליות</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="index-reports-card-section index-reports-next-steps">
+          <h3 class="index-reports-section-label">
+            <i class="fa-solid fa-compass"></i>
+            המלצות לשבוע הבא
+          </h3>
+          <p class="index-reports-next-text">להתמקד בתרגול בעיות הסתברות מורכבות ולחזור על שיטות לפתרון בעיות מילוליות. ממשיכים לחזק את הגיאומטריה!</p>
+        </div>
+
+        <!-- Consistency Row -->
+        <div class="index-reports-consistency">
+          <span class="index-reports-consistency-label"><i class="fa-solid fa-calendar-check"></i> עקביות השבוע</span>
+          <div class="index-reports-dots">
+            <span class="index-reports-dot active"></span>
+            <span class="index-reports-dot active"></span>
+            <span class="index-reports-dot active"></span>
+            <span class="index-reports-dot active"></span>
+            <span class="index-reports-dot active"></span>
+            <span class="index-reports-dot"></span>
+            <span class="index-reports-dot"></span>
+          </div>
+          <span class="index-reports-consistency-score">5/7 ימים</span>
+        </div>
+      </div>
+
+      <!-- Notification Card (peeking from bottom-end corner) -->
+      <div class="index-reports-notif-card">
+        <div class="index-reports-notif-icon">
+          <i class="fa-solid fa-bell"></i>
+        </div>
+        <div class="index-reports-notif-text">
+          <strong>הדוח השבועי נשלח!</strong>
+          <span>ממתין לך בתיבת הדואר</span>
+        </div>
+      </div>
+
+    </div>
+    <!-- end mockup col -->
+
+  </div>
+
+  <!-- Bottom scalloped divider -->
+  <div class="index-reports-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,70 L0,38 Q30,28 60,38 Q90,48 120,38 Q150,28 180,38 Q210,48 240,38 Q270,28 300,38 Q330,48 360,38 Q390,28 420,38 Q450,48 480,38 Q510,28 540,38 Q570,48 600,38 Q630,28 660,38 Q690,48 720,38 Q750,28 780,38 Q810,48 840,38 Q870,28 900,38 Q930,48 960,38 Q990,28 1020,38 Q1050,48 1080,38 Q1110,28 1140,38 Q1170,48 1200,38 L1200,70 Z" fill="#FFFFFF"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section id="testimonials" class="index-testimonials-section" data-layout-spec="בית-testimonials" dir="rtl">
+  <div class="index-testimonials-container">
+
+    <!-- Intro Block -->
+    <div class="index-testimonials-intro">
+      <span class="index-testimonials-badge">מה אומרים עלינו</span>
+      <h2 class="index-testimonials-heading">תלמידים והורים שמרגישים את ההבדל</h2>
+      <p class="index-testimonials-subheading">לא הבטחות — חוויות אמיתיות של משפחות שבחרו במצפן כמורה הפרטי של ילדיהן.</p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="index-testimonials-grid">
+
+      <!-- Card 1: Student -->
+      <article class="index-testimonials-card">
+        <div class="index-testimonials-quote-mark" aria-hidden="true">“</div>
+        <blockquote class="index-testimonials-quote">
+          <p>לפני שהתחלתי להשתמש במצפן, פחדתי לשאול שאלות כי חשבתי שאני אפריע. עכשיו אני שואל כל מה שעולה לי בראש — בכל שעה — ותמיד מקבל הסבר ברור. הציונים שלי בהבנת הנקרא עלו ב־15 נקודות תוך חודש וחצי.</p>
+        </blockquote>
+        <footer class="index-testimonials-author">
+          <div class="index-testimonials-portrait-wrap">
+            <img data-placeholder="index-testimonials-image-1" data-context="Portrait of a smiling Israeli teenage boy, around 14-15 years old, wearing a school backpack, warm natural lighting, clean white background, friendly and confident expression, EdTech testimonial photo" width="56" height="56" src="/assets/site-index-testimonials-image-1.webp" alt="תמונת תלמיד" class="index-testimonials-portrait">
+          </div>
+          <div class="index-testimonials-author-info">
+            <strong class="index-testimonials-name">עומר ל.</strong>
+            <span class="index-testimonials-role">תלמיד כיתה ט׳</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Card 2: Parent -->
+      <article class="index-testimonials-card">
+        <div class="index-testimonials-quote-mark" aria-hidden="true">“</div>
+        <blockquote class="index-testimonials-quote">
+          <p>הדוח השבועי שמגיע ישר לנייד שלי שינה לי את כל התמונה. אני יודעת בדיוק באילו נושאים הבת שלי מתקשה, כמה שאלות היא שאלה, ומה השתפר. לא צריך לחכות לפגישה עם המחנכת כדי להבין מה קורה.</p>
+        </blockquote>
+        <footer class="index-testimonials-author">
+          <div class="index-testimonials-portrait-wrap">
+            <img data-placeholder="index-testimonials-image-2" data-context="Portrait of a warm Israeli mother in her early 40s, looking at her smartphone with a calm and reassured smile, soft indoor lighting, EdTech parent testimonial photo, clean background" width="56" height="56" src="/assets/site-index-testimonials-image-2.webp" alt="תמונת הורה" class="index-testimonials-portrait">
+          </div>
+          <div class="index-testimonials-author-info">
+            <strong class="index-testimonials-name">מיכל ר.</strong>
+            <span class="index-testimonials-role">אמא של תלמידת כיתה ז׳</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Card 3: Family / Affordability -->
+      <article class="index-testimonials-card">
+        <div class="index-testimonials-quote-mark" aria-hidden="true">“</div>
+        <blockquote class="index-testimonials-quote">
+          <p>שילמנו על מורה פרטי 280 ש״ח לשיעור, ארבע פעמים בחודש. עם מצפן משלמים פחות מזה לחודש שלם — ולבן שלנו יש גישה 24 שעות ביממה. ההחלטה הייתה פשוטה מאוד.</p>
+        </blockquote>
+        <footer class="index-testimonials-author">
+          <div class="index-testimonials-portrait-wrap">
+            <img data-placeholder="index-testimonials-image-3" data-context="Portrait of an Israeli father in his mid-40s with a calm and satisfied expression, natural home setting background, warm lighting, EdTech affordability testimonial photo" width="56" height="56" src="/assets/site-index-testimonials-image-3.webp" alt="תמונת הורה" class="index-testimonials-portrait">
+          </div>
+          <div class="index-testimonials-author-info">
+            <strong class="index-testimonials-name">דני ו.</strong>
+            <span class="index-testimonials-role">אבא של שני תלמידים</span>
+          </div>
+        </footer>
+      </article>
+
+    </div>
+    <!-- /Cards Grid -->
+
+  </div>
+
+  <!-- Bottom Divider: torn-paper curve transitioning to dark section -->
+  <div class="index-testimonials-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,80 L0,44 Q60,36 120,46 T240,40 Q300,44 360,36 T480,42 Q540,38 600,44 T720,38 Q780,44 840,36 T960,42 Q1020,38 1080,44 T1200,40 L1200,80 Z" fill="#FFFFFF"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section id="stats" class="index-stats-section" data-layout-spec="בית-stats" dir="rtl">
+  <div class="index-stats-container">
+
+    <!-- Section Header -->
+    <div class="index-stats-header">
+      <span class="index-stats-eyebrow">למה בוחרים במצפן?</span>
+      <h2 class="index-stats-title">הוכחות שמדברות בעד עצמן</h2>
+      <p class="index-stats-subtitle">מורה פרטי AI לתלמידים — זמין תמיד, משתלם תמיד, ומדווח להורים כל שבוע</p>
+    </div>
+
+    <!-- Main Metric Tiles Row -->
+    <div class="index-stats-main-grid">
+
+      <article class="index-stat-tile index-stat-tile--primary">
+        <div class="index-stat-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </div>
+        <div class="index-stat-content">
+          <div class="index-stat-number">24/7</div>
+          <div class="index-stat-label">זמינות מלאה</div>
+          <p class="index-stat-desc">מצפן זמין לכל שאלה של התלמיד בכל שעה — בלילה לפני בחינה, בסוף שבוע, ובאמצע שיעורי הבית</p>
+        </div>
+      </article>
+
+      <article class="index-stat-tile index-stat-tile--accent">
+        <div class="index-stat-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </div>
+        <div class="index-stat-content">
+          <div class="index-stat-number">×4</div>
+          <div class="index-stat-label">חיסכון בעלויות</div>
+          <p class="index-stat-desc">חודש שלם של למידה עם AI במחיר שיעור פרטי אחד — תגבור לימודי לתלמידים ללא פשרות על האיכות</p>
+        </div>
+      </article>
+
+      <article class="index-stat-tile index-stat-tile--secondary">
+        <div class="index-stat-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+        <div class="index-stat-content">
+          <div class="index-stat-number">1×</div>
+          <div class="index-stat-label">דוח שבועי להורים</div>
+          <p class="index-stat-desc">כל שבוע מקבלים ההורים דוח מפורט על התקדמות הילד — שקיפות מלאה ושקט נפשי אמיתי</p>
+        </div>
+      </article>
+
+      <article class="index-stat-tile index-stat-tile--default">
+        <div class="index-stat-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+        </div>
+        <div class="index-stat-content">
+          <div class="index-stat-number">∞</div>
+          <div class="index-stat-label">מקצועות ונושאים</div>
+          <p class="index-stat-desc">מתמטיקה, אנגלית, מדעים, היסטוריה ועוד — מצפן מלווה את התלמיד בכל רגע לימודי</p>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- Trust Pledge Row -->
+    <div class="index-stats-trust-grid">
+
+      <article class="index-trust-card">
+        <div class="index-trust-icon">
+          <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="index-trust-text">
+          <h3 class="index-trust-title">הסברים ברורים תמיד</h3>
+          <p class="index-trust-desc">מצפן מסביר כל נושא בשפה פשוטה ומותאמת לרמת התלמיד — עד שמבינים באמת</p>
+        </div>
+      </article>
+
+      <article class="index-trust-card">
+        <div class="index-trust-icon">
+          <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </div>
+        <div class="index-trust-text">
+          <h3 class="index-trust-title">התקדמות גלויה ומדידה</h3>
+          <p class="index-trust-desc">מעקב רציף אחר שיפור הביצועים — גם ההורה וגם התלמיד רואים לאן מתקדמים</p>
+        </div>
+      </article>
+
+      <article class="index-trust-card">
+        <div class="index-trust-icon">
+          <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        </div>
+        <div class="index-trust-text">
+          <h3 class="index-trust-title">שגרת לימוד רגועה</h3>
+          <p class="index-trust-desc">ילדים לומדים בקצב שלהם, בלי לחץ ובלי שיפוטיות — בית הספר הופך למקום נעים יותר</p>
+        </div>
+      </article>
+
+    </div>
+
+  </div>
+
+  <!-- Bottom Arc Divider -->
+  <div class="index-stats-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,90 L0,55 Q300,0 600,10 Q900,20 1200,55 L1200,90 Z" fill="#163A87"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section id="cta" class="index-cta-section" data-layout-spec="בית-cta" dir="rtl">
+  <div class="index-cta-container">
+
+    <!-- RIGHT SIDE: Message + Reassurance -->
+    <div class="index-cta-message">
+      <div class="index-cta-eyebrow">
+        <span class="index-cta-compass-icon">
+          <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
+            <polygon points="12,2 14.5,9.5 12,12 9.5,9.5" fill="currentColor"></polygon>
+            <polygon points="12,22 9.5,14.5 12,12 14.5,14.5" fill="rgba(255,255,255,0.35)"></polygon>
+          </svg>
+        </span>
+        <span>מצפן — המורה הפרטי של הילד שלך</span>
+      </div>
+
+      <h2 class="index-cta-heading">תנו לילד שלכם<br><em class="index-cta-highlight">מצפן לימודי אמין</em></h2>
+
+      <p class="index-cta-subtext">מצפן הוא מורה פרטי AI זמין לכל שאלה — 24 שעות ביממה, 7 ימים בשבוע — במחיר של שיעור פרטי אחד לחודש. ההורים מקבלים דוח שבועי מפורט כדי לעקוב אחרי ההתקדמות ולהרגיש בשליטה.</p>
+
+      <ul class="index-cta-reassurance">
+        <li class="index-cta-reassurance-item">
+          <span class="index-cta-check">
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="12" cy="12" r="11" fill="rgba(44,177,161,0.18)"></circle>
+              <path d="M7 12.5l3.5 3.5 6.5-7" stroke="#2CB1A1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </span>
+          <div class="index-cta-reassurance-text">
+            <strong>הגדרה מהירה — תוך דקות</strong>
+            <span>ללא תיאום לוחות זמנים, ללא המתנה. מתחילים מיד.</span>
+          </div>
+        </li>
+        <li class="index-cta-reassurance-item">
+          <span class="index-cta-check">
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="12" cy="12" r="11" fill="rgba(44,177,161,0.18)"></circle>
+              <path d="M7 12.5l3.5 3.5 6.5-7" stroke="#2CB1A1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </span>
+          <div class="index-cta-reassurance-text">
+            <strong>זמין 24/7 — ללא הגבלה</strong>
+            <span>שאלה בשעה 11 בלילה לפני מבחן? מצפן תמיד כאן.</span>
+          </div>
+        </li>
+        <li class="index-cta-reassurance-item">
+          <span class="index-cta-check">
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="12" cy="12" r="11" fill="rgba(44,177,161,0.18)"></circle>
+              <path d="M7 12.5l3.5 3.5 6.5-7" stroke="#2CB1A1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </span>
+          <div class="index-cta-reassurance-text">
+            <strong>דוח שבועי להורים</strong>
+            <span>שקיפות מלאה על ההתקדמות — ישירות לנייד שלכם.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- LEFT SIDE: Contact Form Card -->
+    <div class="index-cta-form-card">
+      <div class="index-cta-form-header">
+        <h3 class="index-cta-form-title">רוצים לשמוע עוד?</h3>
+        <p class="index-cta-form-subtitle">השאירו פרטים ונחזור אליכם בהקדם</p>
+      </div>
+
+      <form class="contact-form index-cta-form" novalidate="">
+        <div class="index-cta-field">
+          <label class="index-cta-label" for="cta-name">שם מלא</label>
+          <input class="index-cta-input" type="text" id="cta-name" name="name" placeholder="ישראל ישראלי" required="">
+        </div>
+        <div class="index-cta-field">
+          <label class="index-cta-label" for="cta-email">כתובת אימייל</label>
+          <input class="index-cta-input" type="email" id="cta-email" name="email" placeholder="example@email.com" required="">
+        </div>
+        <div class="index-cta-field">
+          <label class="index-cta-label" for="cta-phone">טלפון</label>
+          <input class="index-cta-input" type="tel" id="cta-phone" name="phone" placeholder="050-000-0000">
+        </div>
+        <div class="index-cta-field">
+          <label class="index-cta-label" for="cta-message">הודעה (אופציונלי)</label>
+          <textarea class="index-cta-input index-cta-textarea" id="cta-message" name="message" placeholder="כיתה, מקצוע, שאלה..." rows="3"></textarea>
+        </div>
+
+        <div class="privacy-consent">
+          <label class="privacy-consent-label">
+            <input type="checkbox" name="privacy_consent" class="privacy-consent-checkbox" required="">
+            <span>קראתי ואני מסכים/ה ל<a href="/terms" target="_blank">תנאי השימוש</a> ול<a href="/privacy" target="_blank">מדיניות הפרטיות</a></span>
+          </label>
+        </div>
+
+        <button type="submit" class="index-cta-submit btn-primary">
+          <span>שלחו פרטים</span>
+          <svg data-element-type="icon" data-icon-type="svg" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Decorative background dots -->
+  <div class="index-cta-bg-decor" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <circle cx="80" cy="80" r="180" fill="rgba(255,255,255,0.03)"></circle>
+      <circle cx="520" cy="320" r="140" fill="rgba(44,177,161,0.06)"></circle>
+      <circle cx="300" cy="200" r="220" fill="rgba(255,255,255,0.02)"></circle>
+    </svg>
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer" dir="rtl">
+  <div class="footer-inner">
+    <div class="footer-top">
+
+      <!-- Column 1: Company Info -->
+      <div class="footer-col footer-brand">
+        <a href="/" class="footer-logo-link">
+          <img src="/assets/business-logo.webp" alt="מצפן" class="logo">
+        </a>
+        <p class="footer-tagline">פלטפורמת הלמידה החכמה שמכוונת כל תלמיד להצלחה — בכל מקצוע, בכל שלב.</p>
+        <div class="footer-social">
+          <a href="[facebook_handle]" aria-label="Facebook" class="social-link"><i class="fab fa-facebook-f"></i></a>
+          <a href="[instagram_handle]" aria-label="Instagram" class="social-link"><i class="fab fa-instagram"></i></a>
+          <a href="[whatsapp_handle]" aria-label="WhatsApp" class="social-link"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="footer-col footer-links">
+        <h4 class="footer-heading">
+          <span class="heading-accent"></span>ניווט מהיר
+        </h4>
+        <ul class="footer-nav">
+          <li><a href="#process"><i class="fas fa-chevron-left nav-arrow"></i>תהליך הלמידה</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-left nav-arrow"></i>שירותים</a></li>
+          <li><a href="#comparison"><i class="fas fa-chevron-left nav-arrow"></i>השוואה</a></li>
+          <li><a href="#reports"><i class="fas fa-chevron-left nav-arrow"></i>דוחות שבועיים</a></li>
+          <li><a href="#testimonials"><i class="fas fa-chevron-left nav-arrow"></i>המלצות</a></li>
+          <li><a href="#stats"><i class="fas fa-chevron-left nav-arrow"></i>נתונים ומספרים</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Contact Info -->
+      <div class="footer-col footer-contact-col">
+        <h4 class="footer-heading">
+          <span class="heading-accent"></span>צרו קשר
+        </h4>
+        <ul class="footer-contact">
+          <li>
+            <span class="contact-icon"><i class="fas fa-envelope"></i></span>
+            <span class="contact-text"><a href="mailto:[business_email]">[business_email]</a></span>
+          </li>
+          <li>
+            <span class="contact-icon"><i class="fas fa-phone"></i></span>
+            <span class="contact-text"><a href="tel:[business_phone]">[business_phone]</a></span>
+          </li>
+          <li><a href="/"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+            <span class="contact-text">[business_address]</span></a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: CTA / Extra -->
+      <div class="footer-col footer-cta-col">
+        <h4 class="footer-heading">
+          <span class="heading-accent"></span>מוכנים להתחיל?
+        </h4>
+        <p class="footer-cta-text">הצטרפו לאלפי משפחות שכבר גילו את ההבדל שמצפן עושה.</p>
+        <a href="#process" class="footer-cta-btn">התחילו עכשיו</a>
+        <div class="footer-badge">
+          <i class="fas fa-shield-alt badge-icon"></i>
+          <span>אבטחה ופרטיות מלאה</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <p class="footer-copyright">© 2026 מצפן. כל הזכויות שמורות.</p>
+      <div class="footer-legal">
+        <a href="/privacy">מדיניות פרטיות</a>
+        <span class="legal-sep"></span>
+        <a href="/terms">תנאי שימוש</a>
+        <span class="legal-sep"></span>
+        <a href="/accessibility">נגישות</a>
+        <span class="legal-sep"></span>
+        <a href="https://zappy5.com" target="_blank" class="zappy-attribution">נוצר באמצעות Zappy</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+
+    <script id="zappy-navbar-scroll-effect">
+    (function(){
+      var nb=document.querySelector('nav.navbar,.navbar:not(.zappy-catalog-menu)');
+      var cm=document.querySelector('.zappy-catalog-menu,#zappy-catalog-menu');
+      if(!nb)return;
+      var fb='rgba(252,251,247,0.85)';
+      var th=60;
+      var rs=getComputedStyle(document.documentElement);
+      var td=rs.getPropertyValue('--text-dark').trim()||'#1a1a1a';
+      var tl=rs.getPropertyValue('--text-light').trim()||'#ffffff';
+      var st=true?td:tl;
+      nb.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease,box-shadow 0.3s ease';
+      if(cm)cm.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease';
+      var neSel='a,.navbar-brand,.navbar-brand a,.dropdown-toggle,.mobile-toggle,.phone-header-btn,.mobile-hamburger-btn,.mobile-close-btn,.mobile-submenu-toggle,.nav-link';
+      var skipCls=['cart-link','login-link','nav-search-toggle','search-toggle'];
+      function sTC(c,clr){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){var sk=false;if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu')){sk=true;}for(var j=0;j<skipCls.length;j++){if(els[i].classList.contains(skipCls[j])){sk=true;break;}}if(!sk)els[i].style.setProperty('color',clr,'important');}}
+      function cTC(c){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu'))continue;els[i].style.removeProperty('color');}}
+      function applyScrolled(){
+        nb.classList.add('scrolled');
+        if(window.innerWidth>768){
+          nb.style.setProperty('--frosted-text',st);
+          nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('background-color',fb,'important');
+          nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+        }
+        if(cm){cm.classList.add('scrolled');if(window.innerWidth>768){cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}}
+      }
+      function onS(){
+        if(window._zappyNavNoDarkHero) return;
+        if(window.innerWidth<=768){nb.classList.remove('scrolled');cTC(nb);if(cm){cm.classList.remove('scrolled');cTC(cm);}return;}
+        var y=window.scrollY||window.pageYOffset;
+        if(y>th){
+          nb.classList.add('scrolled');nb.style.setProperty('background-color',fb,'important');nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('--frosted-text',st);nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+          if(cm){cm.classList.add('scrolled');cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}
+        }else{
+          nb.classList.remove('scrolled');nb.style.setProperty('background-color','transparent','important');nb.style.removeProperty('background-image');
+          nb.style.removeProperty('--frosted-text');nb.style.backdropFilter='none';nb.style.webkitBackdropFilter='none';nb.style.boxShadow='none';
+          cTC(nb);
+          if(cm){cm.classList.remove('scrolled');cm.style.setProperty('background','transparent','important');cm.style.setProperty('backdrop-filter','none','important');cm.style.setProperty('-webkit-backdrop-filter','none','important');cTC(cm);}
+        }
+      }
+      function sLum(rv,gv,bv){rv/=255;gv/=255;bv/=255;rv=rv<=0.03928?rv/12.92:Math.pow((rv+0.055)/1.055,2.4);gv=gv<=0.03928?gv/12.92:Math.pow((gv+0.055)/1.055,2.4);bv=bv<=0.03928?bv/12.92:Math.pow((bv+0.055)/1.055,2.4);return 0.2126*rv+0.7152*gv+0.0722*bv;}
+      window.addEventListener('scroll',onS,{passive:true});
+      window.addEventListener('resize',onS,{passive:true});
+      onS();
+      var heroEl=document.querySelector('section[class*="hero"],[data-hero-type],main>section:first-child');
+      var hasDH=false;
+      if(heroEl){var hCs=getComputedStyle(heroEl);var hBI=hCs.backgroundImage;if(hBI&&hBI!=='none'){if(hBI.indexOf('url(')!==-1){var hM2=hCs.backgroundColor.match(/\d+/g);if(hM2&&hM2.length>=3){hasDH=sLum(parseInt(hM2[0]),parseInt(hM2[1]),parseInt(hM2[2]))<0.4;}else{hasDH=true;}}else if(hBI.indexOf('gradient')!==-1){var cM=hBI.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/g);if(cM&&cM.length>0){var tLm=0;for(var ci=0;ci<cM.length;ci++){var pts=cM[ci].match(/\d+/g);tLm+=sLum(parseInt(pts[0]),parseInt(pts[1]),parseInt(pts[2]));}hasDH=(tLm/cM.length)<0.4;}else{hasDH=true;}}else{hasDH=true;}}else{var hM=hCs.backgroundColor.match(/\d+/g);if(hM&&hM.length>=3){hasDH=sLum(parseInt(hM[0]),parseInt(hM[1]),parseInt(hM[2]))<0.4;}}}
+      if(!hasDH){window.removeEventListener('scroll',onS);window.removeEventListener('resize',onS);applyScrolled();window._zappyNavNoDarkHero=true;}
+    })();
+    </script>
+
+    <script id="zappy-mobile-lang-menu-script">
+    (function() {
+      function initMobileLangMenu() {
+        if (window.innerWidth > 768) {
+          var existingMenu = document.querySelector('.mobile-lang-menu');
+          if (existingMenu) existingMenu.remove();
+          return;
+        }
+        if (document.querySelector('.mobile-lang-menu')) return;
+        var switcher = document.querySelector('.lang-switcher');
+        if (!switcher) return;
+        var dropdown = switcher.querySelector('.lang-switcher-dropdown');
+        if (!dropdown) return;
+        var options = dropdown.querySelectorAll('.lang-option');
+        if (options.length === 0) return;
+        var navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu') || document.querySelector('nav ul');
+        if (!navMenu) return;
+        var currentLang = document.documentElement.lang || 'en';
+        var langConfigs = {
+          he: {name:'עברית',flag:'https://api.iconify.design/circle-flags/il.svg'},
+          en: {name:'English',flag:'https://api.iconify.design/circle-flags/us.svg'},
+          ar: {name:'العربية',flag:'https://api.iconify.design/circle-flags/sa.svg'},
+          fr: {name:'Français',flag:'https://api.iconify.design/circle-flags/fr.svg'},
+          es: {name:'Español',flag:'https://api.iconify.design/circle-flags/es.svg'},
+          de: {name:'Deutsch',flag:'https://api.iconify.design/circle-flags/de.svg'},
+          ru: {name:'Русский',flag:'https://api.iconify.design/circle-flags/ru.svg'},
+          zh: {name:'中文',flag:'https://api.iconify.design/circle-flags/cn.svg'},
+          ja: {name:'日本語',flag:'https://api.iconify.design/circle-flags/jp.svg'},
+          pt: {name:'Português',flag:'https://api.iconify.design/circle-flags/br.svg'},
+          it: {name:'Italiano',flag:'https://api.iconify.design/circle-flags/it.svg'},
+          ko: {name:'한국어',flag:'https://api.iconify.design/circle-flags/kr.svg'}
+        };
+        var container = document.createElement('div');
+        container.className = 'mobile-lang-menu';
+        var currentConfig = langConfigs[currentLang] || {name:currentLang,flag:''};
+        var toggleBtn = document.createElement('button');
+        toggleBtn.className = 'mobile-lang-toggle';
+        toggleBtn.type = 'button';
+        var currentFlagHtml = currentConfig.flag ? '<img src="' + currentConfig.flag + '" width="20" height="20" alt="" style="border-radius:50%;margin-right:8px;margin-left:8px;">' : '';
+        toggleBtn.innerHTML = currentFlagHtml + currentConfig.name;
+        container.appendChild(toggleBtn);
+        var optionsDiv = document.createElement('div');
+        optionsDiv.className = 'mobile-lang-options';
+        var currentLink = document.createElement('a');
+        currentLink.className = 'mobile-lang-option active';
+        currentLink.href = '#';
+        currentLink.innerHTML = currentFlagHtml + currentConfig.name;
+        optionsDiv.appendChild(currentLink);
+        options.forEach(function(opt) {
+          var link = document.createElement('a');
+          link.className = 'mobile-lang-option';
+          link.href = opt.getAttribute('href');
+          link.innerHTML = opt.innerHTML;
+          optionsDiv.appendChild(link);
+        });
+        container.appendChild(optionsDiv);
+        navMenu.appendChild(container);
+        toggleBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleBtn.classList.toggle('expanded');
+          optionsDiv.classList.toggle('expanded');
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileLangMenu); }
+      else { initMobileLangMenu(); }
+      window.addEventListener('resize', function() { clearTimeout(window._mlrt); window._mlrt = setTimeout(initMobileLangMenu, 250); });
+    })();
+    </script>
+</body>
+</html>
